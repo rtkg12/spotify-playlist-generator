@@ -9,7 +9,7 @@ app.set('view engine', 'ejs');
 app.use(express.static('public'));
 app.use(cookieParser());
 
-const scopes = ['user-read-private', 'user-read-email', 'playlist-read-private'];
+const scopes = ['user-read-private', 'user-read-email', 'playlist-read-private', 'user-top-read'];
 const redirectUri = process.env.REDIRECT_URI;
 const clientId = process.env.CLIENT_ID;
 const clientSecret = process.env.CLIENT_SECRET;

@@ -1,3 +1,4 @@
+const _ = require('underscore');
 const user = require('./user');
 
 function loadPlaylists(req) {
@@ -60,7 +61,6 @@ function extractDataPlaylists(playlists) {
         });
       }
     });
-    console.log(extractedData);
     resolve(extractedData);
   });
   // return new Promise((resolve, reject)=>{
@@ -165,4 +165,141 @@ function buildTrackData(trackData, popularity) {
   };
 }
 
-module.exports = { loadPlaylists, getPlaylistTracks, extractTrackFeatures };
+function getListOfArtistsFromTracks(tracks) {
+  return new Promise((resolve, reject) => {
+    let artistIds = tracks.map(x => x.track.artists);
+    const merged = [].concat.apply([], artistIds);
+    artistIds = merged.map(x => x.id);
+    resolve(artistIds);
+  });
+}
+
+function getUserTopArtists(loggedInSpotify) {
+  return new Promise((resolve, reject) => {
+    const promiseArray = [];
+
+    promiseArray.push(loggedInSpotify.getMyTopArtists({ limit: 50, time_range: 'short_term' }));
+    promiseArray.push(loggedInSpotify.getMyTopArtists({ limit: 50, time_range: 'medium_term' }));
+    promiseArray.push(loggedInSpotify.getMyTopArtists({ limit: 50, time_range: 'long_term' }));
+
+    Promise.all(promiseArray)
+      .then(allTopArtists => {
+        // Extract the items from each call return
+        allTopArtists = allTopArtists.map(x => x.body.items);
+
+        // Concatenate all artists
+        const merged = [].concat.apply([], allTopArtists);
+        const topArtistIds = merged.map(x => x.id);
+        resolve(topArtistIds);
+      })
+      .catch(error => {
+        console.log(error);
+      });
+  });
+}
+
+/**
+ * Calculates number of each artist occurrence in playlist and user's top artists and returns top x specified by num
+ * @param {*} loggedInSpotify
+ * @param {*} tracks
+ * @param {*} numOfTopArtists Number of top artists to be returned
+ */
+function getArtistRankRecommendations(loggedInSpotify, tracks, numOfTopArtists) {
+  return new Promise((resolve, reject) => {
+    const promiseArray = [];
+
+    promiseArray.push(getListOfArtistsFromTracks(tracks));
+    promiseArray.push(getUserTopArtists(loggedInSpotify));
+
+    Promise.all(promiseArray)
+      .then(artistList => {
+        // Merge all artist ids from both promises
+        let artistIds = [].concat.apply([], artistList);
+        // Count number of occurrences of each id in array
+        artistIds = _.countBy(artistIds);
+        // Sort by count in descending order
+        const sorted = Object.keys(artistIds).sort(function(a, b) {
+          return -(artistIds[a] - artistIds[b]);
+        });
+
+        const rankedTopArtists = sorted.slice(0, numOfTopArtists);
+        resolve(rankedTopArtists);
+      })
+      .catch(error => {
+        console.log(error);
+      });
+  });
+}
+
+function getUserTopSongs(loggedInSpotify) {
+  return new Promise((resolve, reject) => {
+    const promiseArray = [];
+
+    // Get top 100 songs from all 3 time ranges
+    promiseArray.push(loggedInSpotify.getMyTopTracks({ limit: 50, time_range: 'short_term' }));
+    promiseArray.push(loggedInSpotify.getMyTopTracks({ limit: 50, time_range: 'medium_term' }));
+    promiseArray.push(loggedInSpotify.getMyTopTracks({ limit: 50, time_range: 'long_term' }));
+    promiseArray.push(
+      loggedInSpotify.getMyTopTracks({ limit: 50, offset: 51, time_range: 'short_term' })
+    );
+    promiseArray.push(
+      loggedInSpotify.getMyTopTracks({ limit: 50, offset: 51, time_range: 'medium_term' })
+    );
+    promiseArray.push(
+      loggedInSpotify.getMyTopTracks({ limit: 50, offset: 51, time_range: 'long_term' })
+    );
+
+    Promise.all(promiseArray)
+      .then(allTopTracks => {
+        // Extract the items from each call return
+        allTopTracks = allTopTracks.map(x => x.body.items);
+
+        // Concatenate all artists
+        const merged = [].concat.apply([], allTopTracks);
+        const topTrackIds = merged.map(x => x.id);
+        resolve(topTrackIds);
+      })
+      .catch(error => {
+        console.log(error);
+      });
+  });
+}
+
+function getTrackRankRecommendations(loggedInSpotify, tracks, numOfTopTracks) {
+  return new Promise((resolve, reject) => {
+    const playlistTracks = tracks.map(x => x.track.id);
+    getUserTopSongs(loggedInSpotify).then(topUserTracks => {
+      let fullTrackList = topUserTracks.concat(playlistTracks);
+      fullTrackList = _.shuffle(fullTrackList);
+      // Count number of occurrences of each id in array
+      fullTrackList = _.countBy(fullTrackList);
+      // Sort by count in descending order
+      const sorted = Object.keys(fullTrackList).sort(function(a, b) {
+        return -(fullTrackList[a] - fullTrackList[b]);
+      });
+
+      const topXTracks = [];
+      let count = 0;
+      for (let i = 0; i < sorted.length; i++) {
+        if (count == numOfTopTracks) {
+          break;
+        }
+        if (_.contains(playlistTracks, sorted[i])) {
+          topXTracks.push(sorted[i]);
+          count++;
+        }
+      }
+      resolve(topXTracks);
+    });
+  });
+}
+
+module.exports = {
+  loadPlaylists,
+  getPlaylistTracks,
+  extractTrackFeatures,
+  getListOfArtistsFromTracks,
+  getUserTopArtists,
+  getArtistRankRecommendations,
+  getTrackRankRecommendations,
+};

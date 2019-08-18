@@ -1,0 +1,21 @@
+.spotify-button {
+    background-color: green
+}
+
+#playlist-id {
+    max-width: 75%;
+    margin: 0 auto;
+}
+
+hr {
+    border: 0;
+    clear: both;
+    display: block;
+    width: 96%;
+    background-color: black;
+    height: 1px;
+}
+
+.display-1 {
+    font-size: 5rem
+}

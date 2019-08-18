@@ -12,8 +12,9 @@ app.set('view engine', 'ejs');
 app.use(express.static('public'));
 app.use(cookieParser());
 
+
 app.get('/', function(req, res) {
-  res.render('landing');
+  res.render('main');
 });
 
 app.get('/login', function(req, res) {
@@ -53,7 +54,6 @@ app.get('/callback', function(req, res) {
 });
 
 app.get('/playlists', user.isLoggedIn, (req, res) => {
-  res.render('playlists');
   playlist.loadPlaylists(req).then(allUserPlaylists => {
     res.render('playlists', { playlists: allUserPlaylists });
     // console.log(playlistNames, { maxArrayLength: null });
@@ -61,16 +61,22 @@ app.get('/playlists', user.isLoggedIn, (req, res) => {
   });
 });
 
+app.get('/results', user.isLoggedIn, (req, res) => {
+  res.render('results');
+});
+
 app.get('/test', user.isLoggedIn, (req, res) => {
   console.log('Reached test');
-  const playlistId = '4RgjKurQCKmKkyWCYtT3tQ';
+  const playlistId = '37i9dQZF1DX94qaYRnkufr';
   user.createLoggedInUser(req, res).then(loggedInSpotify => {
     stats.calculateStats(loggedInSpotify, playlistId).then(results => {});
   });
 });
 
 app.get('/test2', (req, res) => {
-  stats.test();
+  user.createLoggedInUser(req, res).then(loggedInSpotify => {
+    playlist.getUserTopArtists(loggedInSpotify).then(artistIds => {});
+  });
 });
 
 app.listen(3000, function() {
