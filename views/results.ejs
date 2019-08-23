@@ -1,9 +1,87 @@
-<h1>Recommended tracks</h1>
+<% include partials/header %>
 
-<ul>
-    <li>
-        <img src="https://ksassets.timeincuk.net/wp/uploads/sites/55/2015/12/2015Coldplay_AHeadFullOfDreams271115-1.jpg"
-            alt="" width="50" height="50">
-        Coldplay
-    </li>
-</ul>
+    <!-- <div class="navbar navbar-expand-lg navbar-light">
+        <div class="container">
+            <a href="#" class="navbar-brand">Spotify Playlist Genie</a>
+              <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                  <span class="navbar-toggler-icon"></span>
+              </button>
+              <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                  <ul class="navbar-nav mr-auto">
+                      <li class="nav-item active">
+                          <a href="" class="nav-link">Home</a>
+                      </li>
+                  </ul>
+              </div>
+        </div>
+    </div>   -->
+    <!-- page heading -->
+    <div class="container my-3 pl-0">
+          <h3>Discover new tracks everyday based on your taste:</h3>
+      </div>
+
+    <!-- Search bar -->
+
+    <div class="container mt-5 mb-3">
+        <div class="row">
+            <div class="col-12 p-0">
+                  <div class="search-bar">
+                      <input type="search" class="searchbar" placeholder="Search for playlist..." />
+                  </div>
+            </div>
+        </div>
+    </div>
+
+    
+    <div class="container my-3 pl-0">
+        <h3>Tracklist:</h3>
+    </div>
+
+    <!-- Tracks container -->
+    <div class="container d-flex">
+        <div class="col-8 p-0 m-0">
+            <% results.forEach(item => { %>
+                <div class="row song-card mb-2">
+                        <div class="col-2 col-lg-1 p-0">
+                              <img class="picture" src="<%= item.album.images[0].url %>" alt="">
+                        </div>
+                        <div class="col-10 col-lg-9 card w-100   p-0">
+                              <div class="card-body p-1">
+                                  <h5 class="card-title mb-0"><%= item.name %></h5>
+                                  <p class="card-text">Coldplay</p>
+                              </div>
+                        </div>
+                        <div class="d-none d-lg-inline col-2 d-flex align-items-center justify-content-center ">
+                            <div class="row d-flex justify-content-around">
+                                <div class="col-6">
+                                        <div class='container'>
+                                            <p>play</p>
+                                       </div>
+                                </div>
+                                <div class="col-6">
+                                      <h5>Time</h5>
+                                </div>
+                            </div>
+                        </div>
+                </div> 
+            <% }) %>
+
+        </div> 
+
+        <div class="col-4 ml-4 col-right">
+            <div class="card mb-5 mx-1">
+                <div class="card-body text-center p-0">
+                    <h5  class="card-title">Keep your tracks</h5>
+                    <p class="card-text">Sign in to save all your tracks.</p>
+                    <a href="#" class="btn btn-success">Sign In</a>
+                </div>
+            </div>
+            <div class="card m-1">
+                <div class="card-body text-center">
+                    <h5 class="card-title">Slide rangers go here</h5>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<% include partials/footer %>
