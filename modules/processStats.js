@@ -23,7 +23,7 @@ function calculateStats(loggedInSpotify, playlistId) {
             .then(recommendationList => {
               const trackList = recommendationList.body.tracks;
               console.log(trackList.map(x => x.name));
-              resolve('done');
+              resolve(trackList);
             })
             .catch(error => {
               console.log(error);
@@ -73,8 +73,8 @@ function calculateFeatureParameters(audioFeatures) {
 
   features.forEach(feature => {
     const mean = parseFloat(stats.mean(audioFeatures[feature]).toFixed(2));
-    const min = parseFloat(stats.quantile(audioFeatures[feature], 0.25).toFixed(2));
-    const max = parseFloat(stats.quantile(audioFeatures[feature], 0.75).toFixed(2));
+    const min = parseFloat(stats.quantile(audioFeatures[feature], 0.1).toFixed(2));
+    const max = parseFloat(stats.quantile(audioFeatures[feature], 0.9).toFixed(2));
     parameters[feature] = { mean, min, max };
   });
   return parameters;

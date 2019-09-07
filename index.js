@@ -12,7 +12,6 @@ app.set('view engine', 'ejs');
 app.use(express.static('public'));
 app.use(cookieParser());
 
-
 app.get('/', function(req, res) {
   res.render('main');
 });
@@ -67,9 +66,11 @@ app.get('/results', user.isLoggedIn, (req, res) => {
 
 app.get('/test', user.isLoggedIn, (req, res) => {
   console.log('Reached test');
-  const playlistId = '37i9dQZF1DX94qaYRnkufr';
+  const playlistId = '1gQhxoEVgneyD4ct0waw2e';
   user.createLoggedInUser(req, res).then(loggedInSpotify => {
-    stats.calculateStats(loggedInSpotify, playlistId).then(results => {});
+    stats.calculateStats(loggedInSpotify, playlistId).then(results => {
+      res.render('results', { results });
+    });
   });
 });
 
