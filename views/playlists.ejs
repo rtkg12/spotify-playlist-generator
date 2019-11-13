@@ -9,26 +9,31 @@
       <p id="introPara"> Welcome to the best playlist recommender in the world. Make your Spotify truly your own.</p>
     </div> -->
 
-<!--Search Box-->
+<!-- Search Box-->
 <div class="container searchBarWrapper">
-  <form class="form-group">
-    <input type="text" class="form-control" id="searchBar" placeholder="Search playlists">
+  <form class="form-group"><h5>Search playlists:</h5></form>
+    <input type="text" class="form-control search-bar searchbar" id="searchBar" placeholder="Enter name....">
   </form>
 </div>
 
 <!--Cards-->
-<div class="container">
-  <div class="row mt-5">
+<div class="container d-flex align-items-center">
+  <div class="row d-flex justify-content-around">
     <% playlists.forEach((playlist)=>{ %>
-    <div class="col-sm-6 col-lg-4">
-      <div class="card m-2">
-        <img src="<%=playlist.image%>" class="img-fluid rounded-circle cardImage">
-        <h5 class="card-title"> <%= playlist.name %> </h5>
-        <a href="#" class="stretched-link"></a>
+    <div class="playlist-holder col-5 col-md-3 col-lg-2 text-center mb-4">
+      <div class="playlist-info p-0">
+          <div class="playlist-art d-flex justify-content-center align-items-center">
+              <img src="<%=playlist.image%>" class="picture playlist-picture">
+            </div>
+          <div class="playlist-name d-flex justify-content-around">
+              <h5 class="playlist-title d-flex align-items-center p-2"><%= playlist.name %></h5>
+          </div>
+          <a href="#" class="stretched-link"></a>
       </div>
     </div>
     <% }); %>
   </div>
+</div>
 
   <!-- Optional JavaScript -->
   <!-- jQuery first, then Popper.js, then Bootstrap JS -->

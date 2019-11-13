@@ -1,5 +1,13 @@
 .spotify-button {
-    background-color: green
+    background-color: #1DB954;
+    border-radius: 2rem;
+    color: white;
+    font-size: 1.7rem;
+}
+
+.btn-lg{
+    height: 3.3rem;
+    width: 20rem;
 }
 
 #playlist-id {
@@ -17,7 +25,7 @@ hr {
 }
 
 .display-1 {
-    font-size: 5rem
+    font-size: 8rem;
 }
 
 html{
@@ -25,7 +33,7 @@ html{
 }
 
 body{
-    background-image: linear-gradient(to right bottom, rgb(115, 15, 127), rgb(29, 9, 76));
+    background-image: linear-gradient(to right bottom, #eb3349, #f45c43);
     background-repeat: no-repeat;
     background-size: contain;
     color: aliceblue;
@@ -33,20 +41,13 @@ body{
 }
 
 .search-bar {
+    height: 3.3rem;
     border-bottom: 1px solid ;
-    background: transparent;
-}
-
-.searchbar {
-    width: 100%;
-    background: transparent;
-    border: none;
 }
 
 .picture{
     max-width: 100%;
     max-height: 100%;
-
 }
 
 .container {
@@ -59,4 +60,44 @@ body{
 
 .card {
     background: transparent;
+}
+
+.playlist-picture {
+    /* border-radius: 0.5rem; */
+    border-top-left-radius: 0.5rem;
+    border-top-right-radius: 0.5rem;
+    background-color: transparent;
+    max-width: 100%;
+    max-height: 100%;
+  }
+
+.playlist-info{
+    border-radius: 0.5rem;
+    height: 16rem;
+}
+
+.playlist-art{
+    /* height: 12rem; */
+    padding-top: 100%;
+}
+
+.playlist-name {
+    background-color: rgb(0, 0, 0, 0.3);
+    border-bottom-left-radius: 0.5rem;
+    border-bottom-right-radius: 0.5rem;
+    color: white;
+}
+
+.playlist-title {
+    height: 3rem;
+    overflow: hidden;
+}
+
+.jumbotron {
+    background-color: #eb3349;
+    height: 40rem;
+}
+
+h5 {
+    font-size: 1.2rem;
 }
