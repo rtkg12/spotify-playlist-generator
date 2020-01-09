@@ -47,12 +47,34 @@ function login() {
 
 function isLoggedIn(req, res, next) {
   if (req.cookies.access_token && req.cookies.refresh_token) {
-    next();
+    if (Date.now() < req.cookies.expiry_time) {
+      next();
+    } else {
+      res.redirect('/refresh');
+    }
   } else {
-    res.redirect('/');
+    res.redirect('/login');
   }
 }
 
+function refreshToken(req, res, next) {
+  return new Promise((resolve, reject) => {
+    createLoggedInUser(req, res).then(loggedInSpotify => {
+      loggedInSpotify.refreshAccessToken().then(
+        function(data) {
+          console.log('The access token has been refreshed!');
+          // Save the access token so that it's used in future calls
+          loggedInSpotify.setAccessToken(data.body.access_token);
+          resolve(data.body.access_token);
+        },
+        function(err) {
+          console.log('Could not refresh access token', err);
+          reject();
+        }
+      );
+    });
+  });
+}
 /**
  * Returns an instance of logged in spotify using the credentials
  * @param {*} access_token
@@ -84,4 +106,12 @@ function getUserId(loggedInSpotify) {
   });
 }
 
-module.exports = { isLoggedIn, createLoggedInUser, getUserId, login, state, spotifyApi };
+module.exports = {
+  isLoggedIn,
+  refreshToken,
+  createLoggedInUser,
+  getUserId,
+  login,
+  state,
+  spotifyApi,
+};

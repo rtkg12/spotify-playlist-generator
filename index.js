@@ -34,13 +34,18 @@ app.get('/callback', function(req, res) {
         console.log(`The access token is ${data.body.access_token}`);
         console.log(`The refresh token is ${data.body.refresh_token}`);
 
+        const exp_duration = data.body.expires_in;
+        const exp_time = Date.now() + (exp_duration - 1) * 1000;
+
         // Set the access token on the API object to use it in later calls
         user.spotifyApi.setAccessToken(data.body.access_token);
         user.spotifyApi.setRefreshToken(data.body.refresh_token);
 
         res.cookie('access_token', data.body.access_token);
         res.cookie('refresh_token', data.body.refresh_token);
-        res.redirect('/test');
+        res.cookie('expiry_time', exp_time);
+
+        res.redirect('/playlists');
       },
       function(err) {}
     );
@@ -50,6 +55,17 @@ app.get('/callback', function(req, res) {
     console.log(user.state);
     res.redirect('/');
   }
+});
+
+app.get('/refresh', (req, res) => {
+  user.refreshToken(req, res).then(newAccessToken => {
+    const exp_duration = 3600;
+    const exp_time = Date.now() + (exp_duration - 1) * 1000;
+
+    res.cookie('access_token', newAccessToken);
+    res.cookie('expiry_time', exp_time);
+    res.redirect('/');
+  });
 });
 
 app.get('/playlists', user.isLoggedIn, (req, res) => {
@@ -64,9 +80,9 @@ app.get('/results', user.isLoggedIn, (req, res) => {
   res.render('results');
 });
 
-app.get('/test', user.isLoggedIn, (req, res) => {
+app.get('/results/:id', user.isLoggedIn, (req, res) => {
   console.log('Reached test');
-  const playlistId = '1gQhxoEVgneyD4ct0waw2e';
+  const playlistId = req.params.id;
   user.createLoggedInUser(req, res).then(loggedInSpotify => {
     stats.calculateStats(loggedInSpotify, playlistId).then(results => {
       res.render('results', { results });
