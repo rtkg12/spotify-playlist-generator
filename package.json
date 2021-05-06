@@ -35,6 +35,6 @@
     "express": "^4.17.1",
     "simple-statistics": "^7.0.5",
     "spotify-web-api-node": "^4.0.0",
-    "underscore": "^1.9.1"
+    "underscore": "^1.12.1"
   }
 }
